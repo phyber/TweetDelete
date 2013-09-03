@@ -28,12 +28,12 @@ log_file: ~/.local/var/log/tweetdelete.log
 log_format: %(asctime): %(name)s %(levelname)s %(message)s
 ```
 
-`max_tweet_age`: The maximum age of your tweets in days. Tweets older than
-this will be deleted.
-`log_file`: Path to file where TweetDelete will log its actions. If the path
-doesn't already exist, TweetDelete will attempt to create it.
-`log_format`: How the data should be logged. The string should be a valid
-logging.[LogRecord attribute](http://docs.python.org/2/library/logging.html#logrecord-attributes).
+ * `max_tweet_age`: The maximum age of your tweets in days. Tweets older than
+                    this will be deleted.
+ * `log_file`: Path to file where TweetDelete will log its actions. If the path
+               doesn't already exist, TweetDelete will attempt to create it.
+ * `log_format`: How the data should be logged. The string should be a valid
+                 logging.[LogRecord attribute](http://docs.python.org/2/library/logging.html#logrecord-attributes).
 
 Running
 -------
