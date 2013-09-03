@@ -1,0 +1,44 @@
+TweetDelete
+===========
+
+Small script to delete old tweets from your timeline.
+
+Requirements
+------------
+
+ * python-twitter (`pip install python-twitter`)
+ * API keys from [Twitter](https://dev.twitter.com/)
+
+Configuration
+-------------
+
+Your configuration should be located at ~/.tweetdelete.conf. At a minimum it
+will need to contain the `[api]` section.
+
+```INI
+[api]
+consumer_key: ...
+consumer_secret: ...
+access_token_key: ...
+access_token_secret: ...
+
+[general]
+max_tweet_age: 180
+log_file: ~/.local/var/log/tweetdelete.log
+log_format: %(asctime): %(name)s %(levelname)s %(message)s
+```
+
+Running
+-------
+
+You should just be able to execute `tweetdelete.py` if you have met the above
+requirements and configuration.
+If you're running the script from within a VirtualEnv a small shell script is
+provided to aid with easily running `tweetdelete.py` from your crontab.
+
+Todo
+----
+
+ * Deal with paging of statuses. It currently requires old tweets to be within
+   your last 200, which won't be true if you tweet a lot.
+ * Dry-run mode to display what would have been deleted.
