@@ -59,11 +59,12 @@ def main():
             tweet = status.GetText()
 
             # Twitter timestamp: Thu Jul 25 19:10:38 +0000 2013
-            tweet_timestamp = int(time.strftime('%s', time.strptime(
+            tweet_unix_timestamp = int(time.strftime('%s', time.strptime(
                 created_at, '%a %b %d %H:%M:%S +0000 %Y')))
 
-            if now - tweet_timestamp > max_age_difference:
-                logging.info("Deleting: {date} -> {tweet}".format(
+            if now - tweet_unix_timestamp > max_age_difference:
+                logging.info("Deleting status #{id}: {date} -> {tweet}".format(
+                    id=tweet_id,
                     date=created_at,
                     tweet=tweet))
                 try:
