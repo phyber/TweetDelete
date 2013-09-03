@@ -35,28 +35,48 @@ def main():
 
     max_age_difference = CONFIG.getint('general', 'max_tweet_age') * 86400
     now = int(time.strftime('%s'))
+
     delete_count = 0
-    statuses = api.GetUserTimeline(count=MAX_TIMELINE_COUNT)
+    max_tweet_id = None
 
-    for status in statuses:
-        created_at = status.GetCreatedAt()
+    while True:
+        logging.debug("Fetching timeline with count={count} and "
+                      "max_id={max_id}".format(count=MAX_TIMELINE_COUNT,
+                                               max_id=max_tweet_id))
 
-        # Twitter timestamp: Thu Jul 25 19:10:38 +0000 2013
-        tweet_timestamp = int(time.strftime('%s', time.strptime(
-            created_at, '%a %b %d %H:%M:%S +0000 %Y')))
+        statuses = api.GetUserTimeline(count=MAX_TIMELINE_COUNT,
+                                       max_id=max_tweet_id)
+        status_count = len(statuses)
 
-        if now - tweet_timestamp > max_age_difference:
+        if status_count == 0:
+            break
+
+        logging.info("Processing {count} statuses.".format(count=status_count))
+
+        for status in statuses:
+            created_at = status.GetCreatedAt()
             tweet_id = status.GetId()
             tweet = status.GetText()
-            logging.info("Deleting: {date} -> {tweet}".format(
-                date=created_at,
-                tweet=tweet))
-            try:
-                api.DestroyStatus(tweet_id, trim_user=True)
-                delete_count = delete_count + 1
-            except twitter.TwitterError as exc:
-                logging.debug(exc)
-                return 1
+
+            # Twitter timestamp: Thu Jul 25 19:10:38 +0000 2013
+            tweet_timestamp = int(time.strftime('%s', time.strptime(
+                created_at, '%a %b %d %H:%M:%S +0000 %Y')))
+
+            if now - tweet_timestamp > max_age_difference:
+                logging.info("Deleting: {date} -> {tweet}".format(
+                    date=created_at,
+                    tweet=tweet))
+                try:
+                    api.DestroyStatus(tweet_id, trim_user=True)
+                    delete_count = delete_count + 1
+                except twitter.TwitterError as exc:
+                    logging.debug(exc)
+                    return 1
+
+            # Always set this one lower than the tweet_id, so that when we
+            # request the next page we don't end up with one that we already
+            # processed.
+            max_tweet_id = tweet_id - 1
 
     logging.info("Finished TweetDelete. {count} tweets deleted.".format(
         count=delete_count))

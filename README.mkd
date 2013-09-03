@@ -39,6 +39,4 @@ provided to aid with easily running `tweetdelete.py` from your crontab.
 Todo
 ----
 
- * Deal with paging of statuses. It currently requires old tweets to be within
-   your last 200, which won't be true if you tweet a lot.
  * Dry-run mode to display what would have been deleted.
