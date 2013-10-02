@@ -21,7 +21,7 @@ log_format: %(asctime)s: %(name)s %(levelname)s %(message)s
 """
 USER_CONFIG_PATH = '~/.tweetdelete.conf'
 
-# Maximum number of tweets we can request. Set my twitter.
+# Maximum number of tweets we can request per API call. Set by twitter.
 # https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
 MAX_TIMELINE_COUNT = 200
 
