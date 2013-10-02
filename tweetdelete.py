@@ -27,7 +27,7 @@ MAX_TIMELINE_COUNT = 200
 
 # For matching and converting twitter timestamp to Unix time.
 # Twitter timestamp: Thu Jul 25 19:10:38 +0000 2013
-TWITTER_TIMESTAMP_PATTERN = '%a %b %d %H:%M:%S +0000 %Y'
+TWITTER_TIMESTAMP_FORMAT = '%a %b %d %H:%M:%S +0000 %Y'
 
 # Used while working out the maximum tweet age.
 ONE_DAY = 86400
@@ -70,7 +70,7 @@ def main():
 
             # Twitter timestamp: Thu Jul 25 19:10:38 +0000 2013
             tweet_unix_timestamp = int(time.strftime('%s', time.strptime(
-                created_at, TWITTER_TIMESTAMP_PATTERN)))
+                created_at, TWITTER_TIMESTAMP_FORMAT)))
 
             if now - tweet_unix_timestamp > max_age_difference:
                 logging.info("Deleting status #{id}: {date} -> {tweet}".format(
