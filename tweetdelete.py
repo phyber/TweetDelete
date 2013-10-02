@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Deletes tweets that are older than max_tweet_age age from your timeline.
+"""
 
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -22,6 +25,13 @@ USER_CONFIG_PATH = '~/.tweetdelete.conf'
 # https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
 MAX_TIMELINE_COUNT = 200
 
+# For matching and converting twitter timestamp to Unix time.
+# Twitter timestamp: Thu Jul 25 19:10:38 +0000 2013
+TWITTER_TIMESTAMP_PATTERN = '%a %b %d %H:%M:%S +0000 %Y'
+
+# Used while working out the maximum tweet age.
+ONE_DAY = 86400
+
 
 def main():
     """Main"""
@@ -33,7 +43,7 @@ def main():
         access_token_secret=CONFIG.get('api', 'access_token_secret')
     )
 
-    max_age_difference = CONFIG.getint('general', 'max_tweet_age') * 86400
+    max_age_difference = CONFIG.getint('general', 'max_tweet_age') * ONE_DAY
     now = int(time.strftime('%s'))
 
     delete_count = 0
@@ -48,7 +58,7 @@ def main():
                                        max_id=max_tweet_id)
         status_count = len(statuses)
 
-        if status_count == 0:
+        if not status_count:
             break
 
         logging.info("Processing {count} statuses.".format(count=status_count))
@@ -60,7 +70,7 @@ def main():
 
             # Twitter timestamp: Thu Jul 25 19:10:38 +0000 2013
             tweet_unix_timestamp = int(time.strftime('%s', time.strptime(
-                created_at, '%a %b %d %H:%M:%S +0000 %Y')))
+                created_at, TWITTER_TIMESTAMP_PATTERN)))
 
             if now - tweet_unix_timestamp > max_age_difference:
                 logging.info("Deleting status #{id}: {date} -> {tweet}".format(
@@ -69,7 +79,7 @@ def main():
                     tweet=tweet))
                 try:
                     api.DestroyStatus(tweet_id, trim_user=True)
-                    delete_count = delete_count + 1
+                    delete_count += 1
                 except twitter.TwitterError as exc:
                     logging.debug(exc)
                     return 1
