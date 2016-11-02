@@ -3,12 +3,10 @@
 Deletes tweets that are older than max_tweet_age age from your timeline.
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
-import ConfigParser as configparser
+import configparser
+import io
 import logging
 import os
-import StringIO
 import sys
 import time
 import twitter
@@ -64,13 +62,10 @@ def main():
         logging.info("Processing {count} statuses.".format(count=status_count))
 
         for status in statuses:
-            created_at = status.GetCreatedAt()
-            tweet_id = status.GetId()
-            tweet = status.GetText()
-
-            # Twitter timestamp: Thu Jul 25 19:10:38 +0000 2013
-            tweet_unix_timestamp = int(time.strftime('%s', time.strptime(
-                created_at, TWITTER_TIMESTAMP_FORMAT)))
+            created_at = status.created_at
+            tweet_id = status.id
+            tweet = status.text
+            tweet_unix_timestamp = status.created_at_in_seconds
 
             if now - tweet_unix_timestamp > max_age_difference:
                 logging.info("Deleting status #{id}: {date} -> {tweet}".format(
@@ -95,9 +90,10 @@ def main():
 
 if __name__ == '__main__':
     CONFIG = configparser.ConfigParser()
-    CONFIG.readfp(StringIO.StringIO(DEFAULT_CONFIG))
+    CONFIG.read_file(io.StringIO(DEFAULT_CONFIG))
     CONFIG.read(os.path.expanduser(USER_CONFIG_PATH))
     LOG_FILE = CONFIG.get('general', 'log_file')
+
     try:
         LOG_PATH = os.path.dirname(os.path.expanduser(LOG_FILE))
         if not os.path.exists(LOG_PATH):
@@ -109,6 +105,7 @@ if __name__ == '__main__':
     logging.basicConfig(
         level=logging.INFO,
         filename=os.path.expanduser(LOG_FILE),
-        format=CONFIG.get('general', 'log_format', True),
+        format=CONFIG.get('general', 'log_format', raw=True),
     )
+
     sys.exit(main())
