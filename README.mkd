@@ -6,7 +6,7 @@ Small script to delete old tweets from your timeline.
 Requirements
 ------------
 
- * python-twitter (`pip install python-twitter`)
+ * python-twitter 3.1 (`pip install python-twitter`)
  * API keys from [Twitter](https://dev.twitter.com/)
 
 Configuration
