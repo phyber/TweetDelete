@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Deletes tweets that are older than max_tweet_age age from your timeline.
 """
